@@ -48,20 +48,24 @@ class StackedBarGraphPlotter(Plotter):
 
     def plot(self):
         x_values = self.graph_data_creator.get_x_values()
-        print x_values
-        indices = np.arange(len(x_values))
+        indices = np.arange(0, len(x_values), 1)
         y_vals = self.graph_data_creator.get_y_dict()
         keys = y_vals.keys()
         chatter1_values = tuple(self.get_padded_list(y_vals[keys[0]], len(x_values)))
         chatter2_values = tuple(self.get_padded_list(y_vals[keys[1]], len(x_values)))
-        p1 = plt.bar(indices, chatter1_values, self.width, color='r')
-        p2 = plt.bar(indices, chatter2_values, self.width, bottom=chatter1_values, color='b')
+
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+
+        p1 = ax.bar(indices, chatter1_values, self.width, color='r')
+        p2 = ax.bar(indices + self.width, chatter2_values, self.width, color='b')
         max_messages = max(max(chatter1_values),max(chatter2_values))
-        plt.ylabel(self.y_label)
-        plt.title(self.title)
-        plt.xticks(indices, tuple(x_values))
-        plt.yticks(np.arange(0, max_messages * 2, max_messages/20))
-        plt.legend((p1[0], p2[0]), (keys[0], keys[1]))
+        ax.set_title(self.title)
+        ax.set_ylabel(self.y_label)
+        ax.set_xticks(indices + self.width)
+        ax.set_xticklabels(tuple(x_values))
+        ax.set_yticks(np.arange(0, max_messages, max_messages/20))
+        ax.legend((p1[0], p2[0]), (keys[0], keys[1]))
 
         plt.show()
 
@@ -69,6 +73,22 @@ class NumberOfMessagesDayPlotter(StackedBarGraphPlotter):
     title = 'Number of Messages sent in a day'
     x_label = 'Date'
     y_label = 'Number of messages'
+
+    def __init__(self, graph_data_creator):
+        StackedBarGraphPlotter.__init__(self, graph_data_creator)
+
+class NumberOfMessagesMonthPlotter(StackedBarGraphPlotter):
+    title = 'Number of Messages sent in a month'
+    x_label = 'Date'
+    y_label = 'Number of messages'
+
+    def __init__(self, graph_data_creator):
+        StackedBarGraphPlotter.__init__(self, graph_data_creator)
+
+class WhoInitiatedInAMonthPlotter(StackedBarGraphPlotter):
+    title = 'Who initiated the conversation first, monthwise'
+    x_label = 'Date'
+    y_label = 'Number of times conversation was initiated'
 
     def __init__(self, graph_data_creator):
         StackedBarGraphPlotter.__init__(self, graph_data_creator)

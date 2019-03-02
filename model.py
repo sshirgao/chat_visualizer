@@ -69,6 +69,25 @@ class NumberOfMessagesChatParser(ChatParser):
     def parse_chat(self, chat):
         return self.get_number_of_messages_dict(chat)
 
+class WhoInitiatedChatParser(ChatParser):
+
+    def __init__(self):
+        pass
+
+    def get_who_initiated_dict(self, chat):
+        chat_dict = collections.OrderedDict()
+        chat_initiator = self.extract_chatter_name_from_chat(chat[0])
+        for chat_line in chat:
+            chatter_name = self.extract_chatter_name_from_chat(chat_line)
+            if chatter_name == chat_initiator:
+                chat_dict[chatter_name] = 1
+            else:
+                chat_dict[chatter_name] = 0
+        return chat_dict
+
+    def parse_chat(self, chat):
+        return self.get_who_initiated_dict(chat)
+
 class Model:
 
     def get_model_data(self):
